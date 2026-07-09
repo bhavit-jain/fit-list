@@ -142,34 +142,77 @@
   .board-head{display:flex;align-items:baseline;justify-content:space-between}
   .board-title{font-family:var(--display);font-style:italic;font-size:24px}
   .board-sub{font-size:11px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase}
-  #boardList{display:flex;flex-direction:column;gap:10px;padding-bottom:16px}
+  #boardList{display:flex;flex-direction:column;gap:8px;padding-bottom:16px}
   .row{
-    display:flex;align-items:center;gap:12px;padding:12px;border-radius:16px;
-    background:var(--card);border:1px solid var(--line);
+    display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:16px;
+    background:var(--card);border:1px solid var(--line);cursor:pointer;
   }
+  .row:active{background:var(--bg2)}
   .row.first{
     border-color:rgba(242,193,78,.55);
     background:linear-gradient(135deg, rgba(242,193,78,.12), var(--card) 55%);
   }
-  .rank{font-family:var(--display);font-style:italic;font-size:24px;width:34px;flex:none;text-align:center;color:var(--muted);font-variant-numeric:tabular-nums}
+  .rank{font-family:var(--display);font-style:italic;font-size:20px;width:28px;flex:none;text-align:center;color:var(--muted);font-variant-numeric:tabular-nums}
   .row.first .rank{color:var(--gold)}
-  .crown{display:block;font-size:14px;line-height:1;text-align:center}
-  .thumb{width:58px;height:74px;border-radius:10px;object-fit:cover;flex:none;border:1px solid var(--line);background:var(--bg2)}
-  .row.first .thumb{width:66px;height:86px;border-color:rgba(242,193,78,.55)}
+  .crown{display:block;font-size:12px;line-height:1;text-align:center}
+  .thumb{width:48px;height:62px;border-radius:10px;object-fit:cover;flex:none;border:1px solid var(--line);background:var(--bg2)}
+  .row.first .thumb{width:56px;height:72px;border-color:rgba(242,193,78,.55)}
   .row-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
-  .row-name{font-weight:700;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .meters{font-size:13px;letter-spacing:1px;line-height:1.4}
+  .row-name{font-weight:700;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .meters{font-size:11px;letter-spacing:.5px;line-height:1.6}
   .meters .dim{filter:grayscale(1);opacity:.3}
   .remark{
-    font-family:var(--display);font-style:italic;font-size:13px;color:var(--muted);
+    font-family:var(--display);font-style:italic;font-size:12px;color:var(--muted);
     overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
   }
   .row-score{flex:none;text-align:right}
-  .row-score .n{font-family:var(--display);font-style:italic;font-size:30px;font-variant-numeric:tabular-nums}
-  .row.first .row-score .n{color:var(--gold);font-size:36px}
+  .row-score .n{font-family:var(--display);font-style:italic;font-size:24px;font-variant-numeric:tabular-nums}
+  .row.first .row-score .n{color:var(--gold);font-size:30px}
   .row-score .of{font-size:11px;color:var(--muted)}
   .pending .row{opacity:.75}
   .pending .row-score .n{font-size:14px;color:var(--muted);font-family:var(--body);font-style:normal}
+
+  /* ---------- fit detail overlay ---------- */
+  #detail{
+    position:fixed;inset:0;z-index:80;display:none;overflow-y:auto;
+    background:rgba(8,3,6,.8);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+    padding:20px 16px calc(24px + env(safe-area-inset-bottom));
+  }
+  #detail.open{display:flex;flex-direction:column;align-items:center}
+  .detail-card{
+    width:min(390px,100%);margin:auto;position:relative;
+    background:var(--bg2);border:1px solid var(--line);border-radius:22px;overflow:hidden;
+    box-shadow:0 18px 60px rgba(0,0,0,.6);
+  }
+  .detail-card img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block}
+  .detail-card .ph{width:100%;aspect-ratio:3/4}
+  .detail-x{
+    position:absolute;top:12px;right:12px;width:38px;height:38px;border-radius:50%;
+    background:rgba(10,4,8,.65);border:1px solid var(--line);color:var(--ink);
+    font-size:15px;display:flex;align-items:center;justify-content:center;z-index:2;
+  }
+  .detail-info{padding:16px 18px 20px;display:flex;flex-direction:column;gap:12px}
+  .detail-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+  .detail-name{font-family:var(--display);font-style:italic;font-size:24px;line-height:1.1;text-wrap:balance}
+  .detail-rank{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+  .detail-rank.gold{color:var(--gold)}
+  .detail-score{font-family:var(--display);font-style:italic;font-size:46px;line-height:1;color:var(--pink);flex:none;font-variant-numeric:tabular-nums}
+  .detail-score .of{font-size:16px;color:var(--muted)}
+  .detail-meters{display:flex;flex-direction:column;gap:8px}
+  .detail-meters .m-label{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
+  .detail-meters .m-row{font-size:19px;letter-spacing:3px}
+  .detail-meters .dim{filter:grayscale(1);opacity:.3}
+  .detail-remark{
+    font-family:var(--display);font-style:italic;font-size:16px;line-height:1.55;color:var(--ink);
+    border-left:2px solid var(--pink);padding-left:12px;
+  }
+  .detail-remark .who{display:block;font-size:10px;font-family:var(--body);font-style:normal;color:var(--muted);letter-spacing:.14em;text-transform:uppercase;margin-top:6px}
+  .detail-actions{display:flex;gap:10px}
+  .detail-btn{
+    flex:1;padding:13px;border-radius:14px;border:1px solid var(--line);background:var(--card);
+    font-size:13px;font-weight:700;letter-spacing:.04em;
+  }
+  .detail-btn.primary{background:var(--pink);border-color:var(--pink);color:#fff}
 
   /* ---------- bottom nav ---------- */
   nav{
@@ -388,6 +431,10 @@
   <button class="save-btn" id="saveRating">Deliver the verdict</button>
 </div>
 
+<div id="detail" role="dialog" aria-modal="true" aria-label="Fit details">
+  <div class="detail-card" id="detailCard"></div>
+</div>
+
 <div id="toast"></div>
 
 <script type="module">
@@ -452,7 +499,10 @@ function parseConfig(text){
   return cfg;
 }
 // exposed for testing only
-window._fitlist={parseConfig};
+window._fitlist={parseConfig,_seed(arr){
+  arr.forEach(o=>{ if(o.photo){ photoCache.set(o.id,o.photo); delete o.photo; } });
+  outfits=arr; wireApp(); renderAll();
+}};
 
 /* ---------- setup persistence & invite links ---------- */
 function readInviteHash(){
@@ -621,6 +671,14 @@ function wireApp(){
   });
   $('#backdrop').addEventListener('click',closeSheet);
   $('#saveRating').addEventListener('click',saveVerdict);
+
+  $('#boardList').addEventListener('click',e=>{
+    const r=e.target.closest('.row[data-id]');
+    if(r) openDetail(r.dataset.id);
+  });
+  $('#detail').addEventListener('click',e=>{
+    if(e.target===e.currentTarget) closeDetail();
+  });
 
   $('#uploadZone').addEventListener('click',()=>$('#fileInput').click());
   $('#fileInput').addEventListener('change',onUpload);
@@ -897,7 +955,7 @@ function renderBoard(){
 }
 function rowHTML(o,rank,first){
   const meters=o.score==null?'':
-    '<div class="meters">'+emojiMeter('🤤',o.lick||0)+' &nbsp; '+emojiMeter('😩',o.crack||0)+'</div>';
+    '<div class="meters">'+emojiMeter('🤤',o.lick||0)+'<br>'+emojiMeter('😩',o.crack||0)+'</div>';
   const remark=o.remarks?'<div class="remark">“'+esc(o.remarks)+'”</div>':'';
   const rankCell=rank==null?'<div class="rank">·</div>':
     '<div class="rank">'+(first?'<span class="crown">👑</span>':'')+rank+'</div>';
@@ -906,10 +964,51 @@ function rowHTML(o,rank,first){
     :'<div class="row-score"><div class="n">'+fmt(o.score)+'</div><div class="of">/10</div></div>';
   const p=photoCache.get(o.id);
   const thumb=p?'<img class="thumb" alt="" src="'+p+'">':'<div class="thumb"></div>';
-  return '<div class="row'+(first?' first':'')+'">'+rankCell+thumb+
+  return '<div class="row'+(first?' first':'')+'" data-id="'+o.id+'">'+rankCell+thumb+
     '<div class="row-body"><div class="row-name">'+esc(o.name)+'</div>'+meters+remark+'</div>'+
     score+'</div>';
 }
+
+/* ---------- fit detail overlay ---------- */
+function ratedSorted(){
+  return outfits.filter(o=>o.score!=null)
+    .sort((a,b)=>b.score-a.score||((b.lick||0)+(b.crack||0))-((a.lick||0)+(a.crack||0))||a.ratedAt-b.ratedAt);
+}
+function openDetail(id){
+  const o=byId(id);
+  if(!o) return;
+  const rated=ratedSorted();
+  const rank=rated.findIndex(x=>x.id===id)+1;
+  const p=photoCache.get(o.id);
+  const photo=p?'<img alt="'+esc(o.name)+'" src="'+p+'">':'<div class="ph">loading…</div>';
+  const rankLine=o.score==null
+    ?'<div class="detail-rank">Awaiting judgment</div>'
+    :(rank===1
+      ?'<div class="detail-rank gold">👑 #1 on the board</div>'
+      :'<div class="detail-rank">#'+rank+' on the board</div>');
+  const score=o.score==null?'':
+    '<div class="detail-score">'+fmt(o.score)+'<span class="of">/10</span></div>';
+  const meters=o.score==null?'':
+    '<div class="detail-meters">'+
+    '<div><div class="m-label">Lick-o-meter · '+(o.lick||0)+'/5</div><div class="m-row">'+emojiMeter('🤤',o.lick||0)+'</div></div>'+
+    '<div><div class="m-label">Crack-o-meter · '+(o.crack||0)+'/5</div><div class="m-row">'+emojiMeter('😩',o.crack||0)+'</div></div>'+
+    '</div>';
+  const remark=o.remarks
+    ?'<div class="detail-remark">“'+esc(o.remarks)+'”<span class="who">Remarks from the judge</span></div>'
+    :'';
+  const actionLabel=o.score==null?'Rate it now':'Amend the verdict';
+  $('#detailCard').innerHTML=
+    '<button class="detail-x" aria-label="Close">✕</button>'+photo+
+    '<div class="detail-info">'+
+    '<div class="detail-top"><div><div class="detail-name">'+esc(o.name)+'</div>'+rankLine+'</div>'+score+'</div>'+
+    meters+remark+
+    '<div class="detail-actions"><button class="detail-btn primary" data-act="rate">'+actionLabel+'</button></div>'+
+    '</div>';
+  $('#detailCard .detail-x').addEventListener('click',closeDetail);
+  $('#detailCard [data-act=rate]').addEventListener('click',()=>{ closeDetail(); openSheet(o); });
+  $('#detail').classList.add('open');
+}
+function closeDetail(){ $('#detail').classList.remove('open'); }
 function emojiMeter(e,v){
   let out='';
   for(let i=0;i<5;i++) out+=i<v?e:'<span class="dim">'+e+'</span>';

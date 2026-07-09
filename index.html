@@ -275,7 +275,7 @@
     <div class="setup-step">
       <b>Got an invite link?</b> Just open it — this screen is only for the very first phone.
     </div>
-    <div class="setup-step">
+    <div class="setup-step" id="setupSteps">
       One-time hookup to your own free database:<br>
       1. Go to <code>console.firebase.google.com</code> → Add project (any name, skip analytics)<br>
       2. Build → <b>Realtime Database</b> → Create database (locked mode)<br>
@@ -401,6 +401,16 @@
 ================================================================ */
 
 const SETUP_KEY='fitlist.setup';
+// Pre-installed Firebase config (the user's own project) — skips the paste step.
+const BAKED_CONFIG={
+  apiKey:"AIzaSyCVn0vyNWlN6lrjHqm5WRFxsMof5aUXqsc",
+  authDomain:"fitcheck-app-7e70e.firebaseapp.com",
+  databaseURL:"https://fitcheck-app-7e70e-default-rtdb.firebaseio.com",
+  projectId:"fitcheck-app-7e70e",
+  storageBucket:"fitcheck-app-7e70e.firebasestorage.app",
+  messagingSenderId:"860403542666",
+  appId:"1:860403542666:web:4ad961b5cba58f3f43db73"
+};
 const $=s=>document.querySelector(s);
 const reduceMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -513,11 +523,16 @@ async function main(){
 }
 
 function wireSetup(){
+  if(BAKED_CONFIG){
+    $('#setupSteps').hidden=true;
+    $('#cfgInput').hidden=true;
+  }
   $('#createRoom').addEventListener('click',async ()=>{
     const err=$('#setupErr');
     err.classList.remove('show');
     try{
-      const cfg=parseConfig($('#cfgInput').value);
+      const pasted=$('#cfgInput').value.trim();
+      const cfg=(BAKED_CONFIG&&!pasted)?BAKED_CONFIG:parseConfig(pasted);
       const setup={config:cfg, room:uid()+uid()};
       persistSetup(setup);
       $('#setup').hidden=true;

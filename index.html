@@ -36,6 +36,7 @@
     -webkit-font-smoothing:antialiased;
     overscroll-behavior-y:none;
   }
+  body.no-scroll{overflow:hidden}
   button{font-family:inherit;color:inherit;background:none;border:none;padding:0;cursor:pointer}
   button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--pink);outline-offset:2px}
   img{-webkit-user-drag:none;user-select:none}
@@ -175,6 +176,7 @@
   /* ---------- fit detail overlay ---------- */
   #detail{
     position:fixed;inset:0;z-index:80;display:none;overflow-y:auto;
+    overscroll-behavior:contain;touch-action:pan-y;
     background:rgba(8,3,6,.8);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
     padding:20px 16px calc(24px + env(safe-area-inset-bottom));
   }
@@ -233,6 +235,7 @@
   #sheet{
     position:fixed;left:50%;bottom:0;transform:translate(-50%,105%);
     width:min(430px,100%);max-height:88dvh;overflow-y:auto;
+    overscroll-behavior:contain;
     background:var(--bg2);border:1px solid var(--line);border-bottom:none;
     border-radius:24px 24px 0 0;z-index:60;
     transition:transform .32s cubic-bezier(.3,1,.3,1);
@@ -795,6 +798,10 @@ function paintRow(kind){
   [...$('#'+kind+'Row').children].forEach((b,idx)=>b.classList.toggle('lit',idx<sheet[kind]));
   $('#'+kind+'Val').textContent=sheet[kind]+' / 5';
 }
+function updateScrollLock(){
+  const anyOpen=$('#sheet').classList.contains('open')||$('#detail').classList.contains('open');
+  document.body.classList.toggle('no-scroll',anyOpen);
+}
 function openSheet(o){
   sheetTarget=o;
   sheet={score:o.score==null?7:o.score, lick:o.lick||0, crack:o.crack||0};
@@ -805,11 +812,13 @@ function openSheet(o){
   paintRow('lick'); paintRow('crack');
   $('#backdrop').classList.add('open');
   $('#sheet').classList.add('open');
+  updateScrollLock();
 }
 function closeSheet(){
   $('#backdrop').classList.remove('open');
   $('#sheet').classList.remove('open');
   sheetTarget=null;
+  updateScrollLock();
 }
 async function saveVerdict(){
   if(!sheetTarget||!fb) return;
@@ -1007,8 +1016,9 @@ function openDetail(id){
   $('#detailCard .detail-x').addEventListener('click',closeDetail);
   $('#detailCard [data-act=rate]').addEventListener('click',()=>{ closeDetail(); openSheet(o); });
   $('#detail').classList.add('open');
+  updateScrollLock();
 }
-function closeDetail(){ $('#detail').classList.remove('open'); }
+function closeDetail(){ $('#detail').classList.remove('open'); updateScrollLock(); }
 function emojiMeter(e,v){
   let out='';
   for(let i=0;i<5;i++) out+=i<v?e:'<span class="dim">'+e+'</span>';

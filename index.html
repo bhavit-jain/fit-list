@@ -175,23 +175,23 @@
 
   /* ---------- fit detail overlay ---------- */
   #detail{
-    position:fixed;inset:0;z-index:80;display:none;overflow-y:auto;
-    overscroll-behavior:contain;touch-action:pan-y;
+    position:fixed;inset:0;z-index:80;display:none;
     background:rgba(8,3,6,.8);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
-    padding:20px 16px calc(24px + env(safe-area-inset-bottom));
+    padding:60px 16px calc(20px + env(safe-area-inset-bottom));
   }
-  #detail.open{display:flex;flex-direction:column;align-items:center}
+  #detail.open{display:flex;align-items:center;justify-content:center}
   .detail-card{
-    width:min(390px,100%);margin:auto;position:relative;
-    background:var(--bg2);border:1px solid var(--line);border-radius:22px;overflow:hidden;
+    width:min(390px,100%);max-height:100%;overflow-y:auto;
+    overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
+    background:var(--bg2);border:1px solid var(--line);border-radius:22px;
     box-shadow:0 18px 60px rgba(0,0,0,.6);
   }
   .detail-card img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block}
   .detail-card .ph{width:100%;aspect-ratio:3/4}
   .detail-x{
-    position:absolute;top:12px;right:12px;width:38px;height:38px;border-radius:50%;
+    position:absolute;top:14px;right:16px;width:40px;height:40px;border-radius:50%;
     background:rgba(10,4,8,.65);border:1px solid var(--line);color:var(--ink);
-    font-size:15px;display:flex;align-items:center;justify-content:center;z-index:2;
+    font-size:16px;display:flex;align-items:center;justify-content:center;z-index:2;
   }
   .detail-info{padding:16px 18px 20px;display:flex;flex-direction:column;gap:12px}
   .detail-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
@@ -435,6 +435,7 @@
 </div>
 
 <div id="detail" role="dialog" aria-modal="true" aria-label="Fit details">
+  <button class="detail-x" id="detailX" aria-label="Close">✕</button>
   <div class="detail-card" id="detailCard"></div>
 </div>
 
@@ -682,6 +683,11 @@ function wireApp(){
   $('#detail').addEventListener('click',e=>{
     if(e.target===e.currentTarget) closeDetail();
   });
+  $('#detailX').addEventListener('click',closeDetail);
+  // swallow touch gestures on the dark area so they can't reach the page behind
+  $('#detail').addEventListener('touchmove',e=>{
+    if(!e.target.closest('.detail-card')) e.preventDefault();
+  },{passive:false});
 
   $('#uploadZone').addEventListener('click',()=>$('#fileInput').click());
   $('#fileInput').addEventListener('change',onUpload);
@@ -1006,15 +1012,14 @@ function openDetail(id){
     ?'<div class="detail-remark">“'+esc(o.remarks)+'”<span class="who">Remarks from the judge</span></div>'
     :'';
   const actionLabel=o.score==null?'Rate it now':'Amend the verdict';
-  $('#detailCard').innerHTML=
-    '<button class="detail-x" aria-label="Close">✕</button>'+photo+
+  $('#detailCard').innerHTML=photo+
     '<div class="detail-info">'+
     '<div class="detail-top"><div><div class="detail-name">'+esc(o.name)+'</div>'+rankLine+'</div>'+score+'</div>'+
     meters+remark+
     '<div class="detail-actions"><button class="detail-btn primary" data-act="rate">'+actionLabel+'</button></div>'+
     '</div>';
-  $('#detailCard .detail-x').addEventListener('click',closeDetail);
   $('#detailCard [data-act=rate]').addEventListener('click',()=>{ closeDetail(); openSheet(o); });
+  $('#detailCard').scrollTop=0;
   $('#detail').classList.add('open');
   updateScrollLock();
 }
